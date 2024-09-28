@@ -1,13 +1,13 @@
 import React from 'react'
-import Typing from '../component/Typing'
-import StartScreen from '../component/StartScreen'
+import StartSection from '../component/StartSection'
+import '../App.css'
 
-export default function Home() {
+export default function HomePage() {
   return (
     <div className='page-bg'>
       <div className='max-w-[800px] mx-auto'>
         {/* <Typing /> */}
-        <StartScreen />
+        <StartSection />
       </div>
     </div>
   )
