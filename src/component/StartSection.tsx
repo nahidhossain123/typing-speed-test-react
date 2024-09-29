@@ -10,24 +10,36 @@ export default function StartSection() {
                     <h1 className='text-[60px]'>Test Your Typing Skills</h1>
                 </div>
                 <div className='flex flex-row  gap-5'>
-                    <Link to='/type/1-minute' className="bg-gray-100 w-full rounded-xl p-5 shadow-md ">
-                        <p>1 Min Test</p>
-                    </Link>
-                    <Link to='/type/2-minute' className="bg-gray-100 w-full rounded-xl p-5 shadow-md ">
-                        <p>3 Min Test</p>
-                    </Link>
-                    <Link to='/type/3-minute' className="bg-gray-100 w-full rounded-xl p-5 shadow-md ">
-                        <p>5 Min Test</p>
-                    </Link>
-                    <Link to='/type/3-minute' className="bg-gray-100 w-full rounded-xl p-5 shadow-md ">
-                        <p>10 Min Test</p>
-                    </Link>
-                    <Link to='/type/1-page' className="bg-gray-100 w-full rounded-xl p-5 shadow-md ">
-                        <p>1 Page</p>
-                    </Link>
-                    <Link to='/type/3-minute' className="bg-gray-100 w-full rounded-xl p-5 shadow-md ">
-                        <p>Custom</p>
-                    </Link>
+                    <div className="bg-gray-100 w-full rounded-xl p-5 shadow-md ">
+                        <p className='p-3 font-bold text-center'>1 Min</p>
+                        <Link className="text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-4 focus:ring-purple-300 font-medium rounded-full text-sm px-5 py-2 text-center mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900" to='/type/1-minute'>
+                            Start Test
+                        </Link>
+                    </div>
+                    <div className="bg-gray-100 w-full rounded-xl p-5 shadow-md ">
+                        <p className='p-3 font-bold text-center'>3 Min</p>
+                        <Link className="text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-4 focus:ring-purple-300 font-medium rounded-full text-sm px-5 py-2 text-center mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900" to='/type/3-minute'>
+                            Start Test
+                        </Link>
+                    </div>
+                    <div className="bg-gray-100 w-full rounded-xl p-5 shadow-md ">
+                        <p className='p-3 font-bold text-center'>5 Min</p>
+                        <Link className="text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-4 focus:ring-purple-300 font-medium rounded-full text-sm px-5 py-2 text-center mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900" to='/type/5-minute'>
+                            Start Test
+                        </Link>
+                    </div>
+                    <div className="bg-gray-100 w-full rounded-xl p-5 shadow-md ">
+                        <p className='p-3 font-bold text-center'>10 Min</p>
+                        <Link className="text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-4 focus:ring-purple-300 font-medium rounded-full text-sm px-5 py-2 text-center mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900" to='/type/10-minute'>
+                            Start Test
+                        </Link>
+                    </div>
+                    <div className="bg-gray-100 w-full rounded-xl p-5 shadow-md ">
+                        <p className='p-3 font-bold text-center'>1 Page</p>
+                        <Link className="text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-4 focus:ring-purple-300 font-medium rounded-full text-sm px-5 py-2 text-center mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900" to='/type/1-page'>
+                            Start Test
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,4 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import stopWatch from '../assets/stop-watch.png'
+import mute from '../assets/volume-up.png'
+import Unmute from '../assets/volume.png'
+import reload from '../assets/reload-time.png'
+import keyPressSound from '../assets/click.wav'
 
 const paragraph = [
   "Resources exquisite set arranging moonlight sex him household had. Months had too ham cousin remove far spirit. She procuring the why performed continual improving. Civil songs so large shade in cause. Lady an mr here must neat sold. Children greatest ye extended delicate of. No elderly passage earnest as in removed winding or. ",
@@ -12,26 +17,69 @@ const randomIndex = Math.floor(Math.random() * paragraph.length)
 
 export default function Typing() {
   const [typingText, setTypingText] = useState(paragraph[randomIndex])
+  const [isMute, setIsMute] = useState(false)
+  const [text, setText] = useState('')
+  const audioRef = useRef(null)
+
+  const handleKeyPress = () => {
+    new Audio(keyPressSound).play()
+  };
+
+  useEffect(() => {
+    window.addEventListener('keypress', handleKeyPress);
+    return () => {
+      window.removeEventListener('keypress', handleKeyPress);
+    };
+  }, []);
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setText(e.target.value)
+    console.log('ONchange', e.target.value)
+  }
+
+
   return (
     <div className="h-screen flex flex-1 flex-col justify-between py-5 gap-3">
-      <div className="bg-gray-100 rounded-xl p-5 shadow-md ">
-        <div>
-          <span>
-
-          </span>
+      <input type="text" onChange={handleInput} autoFocus={true} />
+      <div className="bg-gray-100 rounded-xl p-2 shadow-md flex gap-5">
+        <div className="flex items-center justify-between flex-1">
+          <div className="flex items-center">
+            {/* <img className="w-[30px] h-[30px]" src={stopWatch} alt='stop watch' /> */}
+            <span className="block rounded-xl border-2 font-bold border-indigo-600 p-2 flex items-center justify-center">
+              01:00
+            </span>
+          </div>
+          <div className="flex items-center">
+            {/* <img className="w-[30px] h-[30px]" src={stopWatch} alt='stop watch' /> */}
+            <h4 className="font-bold">
+              1 Minute Test
+            </h4>
+          </div>
+          <div className="flex gap-5">
+            <div className="">
+              {isMute ? (<img onClick={() => {
+                setIsMute(false)
+              }} className="w-[30px] h-[30px]" src={Unmute} alt='unmute' />) : (<img onClick={() => {
+                setIsMute(true)
+              }} className="w-[30px] h-[30px]" src={mute} alt='mute' />)}
+            </div>
+            <div className="">
+              <img className="w-[30px] h-[30px]" src={reload} alt='stop watch' />
+            </div>
+          </div>
         </div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
       </div>
-      <div className="bg-gray-100 rounded-xl p-5 flex-1 shadow-md ">
+      <div className="bg-gray-100 rounded-xl p-5 flex-1 shadow-md flex flex-wrap overflow-hidden">
         {typingText.split('').map((item, index) => (
-          <span>{item}</span>
+          <span className={`block mb-5 pb-5 border-b-2  
+            ${text.length == index ? 'animate-blink' : ''}
+            `}>
+            <span className={`block h-full m-0.5 rounded-md text-[30px] leading-[30px] p-1.5
+             ${text[index] == item ? 'bg-green-200 text-geen-300' : index < text.length ? 'bg-red-200 text-red-500' : ''}
+            `}>{item}</span>
+          </span>
         ))}
       </div>
-      <div className="bg-gray-100 rounded-xl p-5 shadow-md ">
 
-      </div>
     </div>)
 }
