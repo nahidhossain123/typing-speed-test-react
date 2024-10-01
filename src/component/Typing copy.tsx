@@ -21,10 +21,9 @@ export default function Typing() {
   const [text, setText] = useState('')
   const audioRef = useRef(null)
   const audio = new Audio(keypressedSound)
-  const [translateY, setTranslateY] = useState(0)
+
   const [currentIndex, setCurrentIndex] = useState(0)
   const paragraphDivRef = useRef<HTMLDivElement | null>(null)
-  const [lineCount, setLineCount] = useState(1)
   let len = 0;
   const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>): void => {
 
@@ -35,13 +34,7 @@ export default function Typing() {
       if (paragraphDivRef.current) {
         const paragraphRect = paragraphDivRef.current.getBoundingClientRect()
         const wordPerline = Math.floor((paragraphRect.width - 40) / 35)
-        if (text.length + 1 == 21 * lineCount) {
-          setTranslateY(72 * lineCount)
-          let count = lineCount + 1
-          setLineCount(count)
-        }
-        console.log('wordPerline', 21, text.length + 1, translateY, lineCount)
-
+        console.log('wordPerline', wordPerline, text.length + 1)
       }
     } else if (e.nativeEvent.code == 'Backspace') {
       audio.play()
@@ -93,9 +86,9 @@ export default function Typing() {
           </div>
         </div>
       </div>
-      <div className="flex-1 shadow-md bg-gray-100 rounded-xl  p-5 overflow-hidden">
+      <div className="flex-1 shadow-md bg-gray-100 rounded-xl  p-5">
         <div className="overflow-hidden">
-          <div ref={paragraphDivRef} className={`flex flex-wrap justify-center transition ease-in-out`} style={{ transform: `translateY(-${translateY}px)`, }}>
+          <div ref={paragraphDivRef} className="flex flex-wrap justify-center transition ease-in-out">
             {typingText.split('').map((item, index) => (
               <div className="mb-4">
                 <span className={`block w-[35px] h-full pb-3 border-b-2  
