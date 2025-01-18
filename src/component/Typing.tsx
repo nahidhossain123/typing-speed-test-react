@@ -25,26 +25,38 @@ export default function Typing() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const paragraphDivRef = useRef<HTMLDivElement | null>(null)
   const [lineCount, setLineCount] = useState(1)
+  const charRef = useRef<(HTMLDivElement | null)[]>([])
   let len = 0;
   const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>): void => {
 
     if (/^[a-zA-Z]$/.test(e.key) || e.key == ' ' || /^[0-9]$/.test(e.key) || e.key == '.') {
-      audio.play()
+      //audio.play()
       setText(text + e.key)
       len = text.length
       if (paragraphDivRef.current) {
         const paragraphRect = paragraphDivRef.current.getBoundingClientRect()
-        const wordPerline = Math.floor((paragraphRect.width - 40) / 35)
-        if (text.length + 1 == 21 * lineCount) {
+        const wordPerline = Math.floor((paragraphRect.width) / 33)
+        if (text.length + 1 == wordPerline * lineCount) {
           setTranslateY(72 * lineCount)
-          let count = lineCount + 1
-          setLineCount(count)
+          setLineCount(prevState => prevState + 1)
         }
-        console.log('wordPerline', 21, text.length + 1, translateY, lineCount)
-
+        //console.log('wordPerline', wordPerline, text.length + 1, translateY, lineCount)
       }
     } else if (e.nativeEvent.code == 'Backspace') {
-      audio.play()
+      //audio.play()
+      if (paragraphDivRef.current) {
+        const paragraphRect = paragraphDivRef.current.getBoundingClientRect()
+        const charRect = charRef?.current[text.length]?.getBoundingClientRect()
+        const wordPerline = Math.floor((paragraphRect.width) / 33)
+        console.log('wordPerline', text.length, wordPerline * lineCount, wordPerline, lineCount, translateY, wordPerline * (lineCount - 1))
+        if (wordPerline * (lineCount - 1) == text.length) {
+          if (lineCount > 1) {
+            setTranslateY(72 * (lineCount - 2))
+            setLineCount(prevState => prevState - 1)
+          }
+        }
+        //console.log('wordPerline', wordPerline, text.length + 1, translateY, lineCount, charRect)
+      }
       setText(text.slice(0, -1))
     }
   }
@@ -97,9 +109,8 @@ export default function Typing() {
         <div className="overflow-hidden">
           <div ref={paragraphDivRef} className={`flex flex-wrap justify-center transition ease-in-out`} style={{ transform: `translateY(-${translateY}px)`, }}>
             {typingText.split('').map((item, index) => (
-              <div className="mb-4">
-                <span className={`block w-[35px] h-full pb-3 border-b-2  
-            ${text.length == index ? 'animate-blink' : ''}
+              <div ref={el => (charRef.current[index] = el)} className={`mb-4 border-b-2 ${text.length == index ? 'animate-blink' : ''}`}>
+                <span className={`block w-[25px] h-full pb-3 mr-2
             `}>
                   <span className={`block h-full rounded-md text-[30px] leading-[30px] p-1.5
              ${text[index] == item ? 'bg-green-200 text-geen-300' : index < text.length ? 'bg-red-200 text-red-500' : ''}
