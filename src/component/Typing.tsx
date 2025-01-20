@@ -4,6 +4,7 @@ import mute from '../assets/volume-up.png'
 import Unmute from '../assets/volume.png'
 import reload from '../assets/reload-time.png'
 import keypressedSound from '../assets/click.wav'
+import { useParams } from "react-router-dom";
 
 const paragraph = [
   "Resources exquisite set arranging moonlight sex him household had. Months had too ham cousin remove far spirit. She procuring the why performed continual improving. Civil songs so large shade in cause. Lady an mr here must neat sold. Children greatest ye extended delicate of. No elderly passage earnest as in removed winding or. ",
@@ -13,20 +14,48 @@ const paragraph = [
   "For though result and talent add are parish valley. Songs in oh other avoid it hours woman style. In myself family as if be agreed. Gay collected son him knowledge delivered put. Added would end ask sight and asked saw dried house. Property expenses yourself occasion endeavor two may judgment she. Me of soon rank be most head time tore. Colonel or passage to ability. "
 ];
 
-const randomIndex = Math.floor(Math.random() * paragraph.length)
+const generateNewParagraph = () => {
+  return Math.floor(Math.random() * paragraph.length)
+}
+
 
 export default function Typing() {
-  const [typingText, setTypingText] = useState(paragraph[randomIndex])
+  const { id } = useParams()
+  const [typingText, setTypingText] = useState(paragraph[generateNewParagraph()])
   const [isMute, setIsMute] = useState(false)
+  const [minute, setMinute] = useState(id.split('-')[0])
+  const [second, setSecond] = useState(0)
   const [text, setText] = useState('')
   const audioRef = useRef(null)
-  const audio = new Audio(keypressedSound)
+  // const audio = new Audio(keypressedSound)
   const [translateY, setTranslateY] = useState(0)
   const [currentIndex, setCurrentIndex] = useState(0)
   const paragraphDivRef = useRef<HTMLDivElement | null>(null)
   const [lineCount, setLineCount] = useState(1)
   const charRef = useRef<(HTMLDivElement | null)[]>([])
   let len = 0;
+
+
+  useEffect(() => {
+    let intervalId;
+    intervalId = setInterval(() => {
+      console.log('Seconds', second, minute)
+      if (second > 0) {
+        setSecond(prevState => prevState - 1)
+      } else if (second == 0 && minute > 0) {
+        setMinute(prevState => prevState - 1)
+        setSecond(59)
+      }
+      if (second == 0 && minute == 0) {
+        clearInterval(intervalId)
+      }
+    }, 1000);
+    return () => {
+      clearInterval(intervalId)
+    }
+  }, [minute, second])
+
+
   const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>): void => {
 
     if (/^[a-zA-Z]$/.test(e.key) || e.key == ' ' || /^[0-9]$/.test(e.key) || e.key == '.') {
@@ -76,13 +105,13 @@ export default function Typing() {
 
   return (
     <div className="h-screen flex flex-1 flex-col justify-between py-5 gap-3">
-      <input type="text" value={text} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} onChange={handleInput} autoFocus={true} />
+      <input className="absolute top-0 opacity-0" type="text" value={text} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} onChange={handleInput} autoFocus={true} />
       <div className="bg-gray-100 rounded-xl p-2 shadow-md flex gap-5">
         <div className="flex items-center justify-between flex-1">
           <div className="flex items-center">
             {/* <img className="w-[30px] h-[30px]" src={stopWatch} alt='stop watch' /> */}
             <span className="block rounded-xl border-2 font-bold border-indigo-600 p-2 flex items-center justify-center">
-              01:00
+              {(parseInt(minute) < 10) ? '0' + minute : minute}:{(second < 10) ? '0' + second : second}
             </span>
           </div>
           <div className="flex items-center">
@@ -100,7 +129,11 @@ export default function Typing() {
               }} className="w-[30px] h-[30px]" src={mute} alt='mute' />)}
             </div>
             <div className="">
-              <img className="w-[30px] h-[30px]" src={reload} alt='stop watch' />
+              <img onClick={() => {
+                setMinute(id.split('-')[0])
+                setSecond(0)
+                setTypingText(paragraph[generateNewParagraph()])
+              }} className="w-[30px] h-[30px]" src={reload} alt='stop watch' />
             </div>
           </div>
         </div>

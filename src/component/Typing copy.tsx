@@ -4,6 +4,7 @@ import mute from '../assets/volume-up.png'
 import Unmute from '../assets/volume.png'
 import reload from '../assets/reload-time.png'
 import keypressedSound from '../assets/click.wav'
+import { useParams } from "react-router-dom";
 
 const paragraph = [
   "Resources exquisite set arranging moonlight sex him household had. Months had too ham cousin remove far spirit. She procuring the why performed continual improving. Civil songs so large shade in cause. Lady an mr here must neat sold. Children greatest ye extended delicate of. No elderly passage earnest as in removed winding or. ",
