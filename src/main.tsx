@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import HomePage from './routes/HomePage.tsx'
 import { NotFound } from './routes/NotFound.tsx'
 import TypingPage from './routes/TypingPage.tsx'
+import ResultPage from './routes/ResultPage.tsx'
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
   {
     path: '/type/:id',
     element: <TypingPage />,
+  },
+  {
+    path: '/type/result',
+    element: <ResultPage />,
   }
 ])
 

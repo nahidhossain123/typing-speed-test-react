@@ -5,49 +5,53 @@ import Unmute from '../assets/volume.png'
 import reload from '../assets/reload-time.png'
 import keypressedSound from '../assets/click.wav'
 import { useParams } from "react-router-dom";
+import { generateNewParagraph } from "../utils/commonFunctions";
 
-const paragraph = [
-  "Resources exquisite set arranging moonlight sex him household had. Months had too ham cousin remove far spirit. She procuring the why performed continual improving. Civil songs so large shade in cause. Lady an mr here must neat sold. Children greatest ye extended delicate of. No elderly passage earnest as in removed winding or. ",
-  "Another journey chamber way yet females man. Way extensive and dejection get delivered deficient sincerity gentleman age. Too end instrument possession contrasted motionless. Calling offence six joy feeling. Coming merits and was talent enough far. Sir joy northward sportsmen education. Discovery incommode earnestly no he commanded if. Put still any about manor heard. ",
-  "Is allowance instantly strangers applauded discourse so. Separate entrance welcomed sensible laughing why one moderate shy. We seeing piqued garden he. As in merry at forth least ye stood. And cold sons yet with. Delivered middleton therefore me at. Attachment companions man way excellence how her pianoforte. ",
-  "Built purse maids cease her ham new seven among and. Pulled coming wooded tended it answer remain me be. So landlord by we unlocked sensible it. Fat cannot use denied excuse son law. Wisdom happen suffer common the appear ham beauty her had. Or belonging zealously existence as by resources. ",
-  "For though result and talent add are parish valley. Songs in oh other avoid it hours woman style. In myself family as if be agreed. Gay collected son him knowledge delivered put. Added would end ask sight and asked saw dried house. Property expenses yourself occasion endeavor two may judgment she. Me of soon rank be most head time tore. Colonel or passage to ability. "
-];
+let isMistake = false
+let typedString = ''
 
-const generateNewParagraph = () => {
-  return Math.floor(Math.random() * paragraph.length)
-}
-
-
-export default function Typing() {
-  const { id } = useParams()
-  const [typingText, setTypingText] = useState(paragraph[generateNewParagraph()])
+export default function Typing({ paragraph, id }: { paragraph: string[], id: string }) {
+  const [typingText, setTypingText] = useState(paragraph[generateNewParagraph(paragraph)])
   const [isMute, setIsMute] = useState(false)
+  const [hasMistake, setHasMistake] = useState(-1)
+  const [wpm, setWPM] = useState(0)
+  const [cpm, setCPM] = useState(0)
+  const [accuracy, setAccuracy] = useState(0)
   const [minute, setMinute] = useState(id.split('-')[0])
   const [second, setSecond] = useState(0)
   const [text, setText] = useState('')
-  const audioRef = useRef(null)
-  // const audio = new Audio(keypressedSound)
+  const audio = new Audio(keypressedSound)
   const [translateY, setTranslateY] = useState(0)
-  const [currentIndex, setCurrentIndex] = useState(0)
   const paragraphDivRef = useRef<HTMLDivElement | null>(null)
   const [lineCount, setLineCount] = useState(1)
   const charRef = useRef<(HTMLDivElement | null)[]>([])
-  let len = 0;
-
 
   useEffect(() => {
     let intervalId;
+    let startTime = new Date()
     intervalId = setInterval(() => {
       console.log('Seconds', second, minute)
       if (second > 0) {
         setSecond(prevState => prevState - 1)
       } else if (second == 0 && minute > 0) {
         setMinute(prevState => prevState - 1)
-        setSecond(59)
+        setSecond(20)
       }
       if (second == 0 && minute == 0) {
         clearInterval(intervalId)
+        let elapsedTime = 20
+        let cpm = Math.round(text.length / (elapsedTime / 60))
+        let wpm = Math.round(text.length / 5 * (60 / elapsedTime))
+        setCPM(cpm)
+        setWPM(wpm)
+        let correctChar = 0;
+        for (let i = 0; i < text.length; i++) {
+          if (text[i] == typingText[i]) {
+            correctChar++
+          }
+        }
+        const accuracyPercent = (correctChar / text.length) * 100
+        setAccuracy(accuracyPercent)
       }
     }, 1000);
     return () => {
@@ -55,105 +59,84 @@ export default function Typing() {
     }
   }, [minute, second])
 
-
   const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>): void => {
-
     if (/^[a-zA-Z]$/.test(e.key) || e.key == ' ' || /^[0-9]$/.test(e.key) || e.key == '.') {
-      //audio.play()
-      setText(text + e.key)
-      len = text.length
-      if (paragraphDivRef.current) {
-        const paragraphRect = paragraphDivRef.current.getBoundingClientRect()
-        const wordPerline = Math.floor((paragraphRect.width) / 33)
-        if (text.length + 1 == wordPerline * lineCount) {
-          setTranslateY(72 * lineCount)
-          setLineCount(prevState => prevState + 1)
+      audio.play()
+      console.log('first', typingText[text.length], text, '|', e.key)
+      if (typingText[text.length] == e.key) {
+        isMistake = false
+        setText(text + e.key)
+        if (paragraphDivRef.current) {
+          const paragraphRect = paragraphDivRef.current.getBoundingClientRect()
+          const wordPerline = Math.floor((paragraphRect.width) / 33)
+          if (text.length + 1 == wordPerline * lineCount) {
+            setTranslateY(72 * lineCount)
+            setLineCount(prevState => prevState + 1)
+          }
         }
-        //console.log('wordPerline', wordPerline, text.length + 1, translateY, lineCount)
+      } else {
+        if (!isMistake) {
+          setText(text + e.key)
+          if (paragraphDivRef.current) {
+            const paragraphRect = paragraphDivRef.current.getBoundingClientRect()
+            const wordPerline = Math.floor((paragraphRect.width) / 33)
+            if (text.length + 1 == wordPerline * lineCount) {
+              setTranslateY(72 * lineCount)
+              setLineCount(prevState => prevState + 1)
+            }
+          }
+          isMistake = true
+        } else {
+          setHasMistake(text.length)
+        }
       }
+
     } else if (e.nativeEvent.code == 'Backspace') {
-      //audio.play()
+      audio.play()
       if (paragraphDivRef.current) {
         const paragraphRect = paragraphDivRef.current.getBoundingClientRect()
-        const charRect = charRef?.current[text.length]?.getBoundingClientRect()
         const wordPerline = Math.floor((paragraphRect.width) / 33)
-        console.log('wordPerline', text.length, wordPerline * lineCount, wordPerline, lineCount, translateY, wordPerline * (lineCount - 1))
         if (wordPerline * (lineCount - 1) == text.length) {
           if (lineCount > 1) {
             setTranslateY(72 * (lineCount - 2))
             setLineCount(prevState => prevState - 1)
           }
         }
-        //console.log('wordPerline', wordPerline, text.length + 1, translateY, lineCount, charRect)
       }
+      typedString.slice(0, -1)
       setText(text.slice(0, -1))
     }
   }
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
-    // if (keypressed) return
-    // setKeypressed(e.key)
-  }
 
-  const handleInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    // if (keypressed != e.target.value) {
-    //   audio.play()
-    //   setText(e.target.value)
-    // }
-    // console.log('ONchange', e.target.value, keypressed)
-  }
+  useEffect(() => {
+    setTimeout(() => {
+      setHasMistake(-1)
+    }, 200);
+  }, [hasMistake])
+
 
 
   return (
-    <div className="h-screen flex flex-1 flex-col justify-between py-5 gap-3">
-      <input className="absolute top-0 opacity-0" type="text" value={text} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} onChange={handleInput} autoFocus={true} />
-      <div className="bg-gray-100 rounded-xl p-2 shadow-md flex gap-5">
-        <div className="flex items-center justify-between flex-1">
-          <div className="flex items-center">
-            {/* <img className="w-[30px] h-[30px]" src={stopWatch} alt='stop watch' /> */}
-            <span className="block rounded-xl border-2 font-bold border-indigo-600 p-2 flex items-center justify-center">
-              {(parseInt(minute) < 10) ? '0' + minute : minute}:{(second < 10) ? '0' + second : second}
-            </span>
-          </div>
-          <div className="flex items-center">
-            {/* <img className="w-[30px] h-[30px]" src={stopWatch} alt='stop watch' /> */}
-            <h4 className="font-bold">
-              1 Minute Test
-            </h4>
-          </div>
-          <div className="flex gap-5">
-            <div className="">
-              {isMute ? (<img onClick={() => {
-                setIsMute(false)
-              }} className="w-[30px] h-[30px]" src={Unmute} alt='unmute' />) : (<img onClick={() => {
-                setIsMute(true)
-              }} className="w-[30px] h-[30px]" src={mute} alt='mute' />)}
-            </div>
-            <div className="">
-              <img onClick={() => {
-                setMinute(id.split('-')[0])
-                setSecond(0)
-                setTypingText(paragraph[generateNewParagraph()])
-              }} className="w-[30px] h-[30px]" src={reload} alt='stop watch' />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="flex-1 shadow-md bg-gray-100 rounded-xl  p-5 overflow-hidden">
-        <div className="overflow-hidden">
-          <div ref={paragraphDivRef} className={`flex flex-wrap justify-center transition ease-in-out`} style={{ transform: `translateY(-${translateY}px)`, }}>
-            {typingText.split('').map((item, index) => (
-              <div ref={el => (charRef.current[index] = el)} className={`mb-4 border-b-2 ${text.length == index ? 'animate-blink' : ''}`}>
-                <span className={`block w-[25px] h-full pb-3 mr-2
+    <div className='h-full'>
+      <div className="h-full flex flex-1 flex-col justify-between gap-3">
+        <input className="absolute top-0" type="text" value={text} onKeyUp={handleKeyUp} autoFocus={true} />
+        <div className="flex-1 rounded-xl bg-[#FFFFFF80] p-5 mb-5 overflow-hidden">
+          <div className="overflow-hidden">
+            <div ref={paragraphDivRef} className={`flex flex-wrap justify-center transition ease-in-out`} style={{ transform: `translateY(-${translateY}px)`, }}>
+              {typingText.split('').map((item, index) => (
+                <div ref={el => (charRef.current[index] = el)} className={`mb-4 border-b-2 ${text.length == index ? 'animate-blink' : ''}`}>
+                  <span className={`block w-[25px] h-full pb-3 mr-2
             `}>
-                  <span className={`block h-full rounded-md text-[30px] leading-[30px] p-1.5
+                    <span className={`block h-full rounded-md text-[30px] leading-[30px] p-1.5
              ${text[index] == item ? 'bg-green-200 text-geen-300' : index < text.length ? 'bg-red-200 text-red-500' : ''}
+             ${hasMistake == index ? 'animate-shake bg-red-200 text-red-500' : ''}
             `}>{item}</span>
-                </span>
-              </div>
-            ))}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-
     </div>)
 }
