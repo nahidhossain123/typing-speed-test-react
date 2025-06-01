@@ -7,6 +7,7 @@ let typedString = ''
 
 export default function Typing({ paragraph, isAnalyzing, setIsAnalyzing, isMute }: { paragraph: string, isAnalyzing: boolean, setIsAnalyzing: React.Dispatch<React.SetStateAction<boolean>>, isMute: boolean }) {
   const navigate = useNavigate()
+  const inputRef = useRef<HTMLInputElement>(null)
   const [hasMistake, setHasMistake] = useState(-1)
   const [text, setText] = useState('')
   const audio = new Audio(keypressedSound)
@@ -14,6 +15,21 @@ export default function Typing({ paragraph, isAnalyzing, setIsAnalyzing, isMute 
   const paragraphDivRef = useRef<HTMLDivElement | null>(null)
   const [lineCount, setLineCount] = useState(1)
   const charRef = useRef<(HTMLDivElement | null)[]>([])
+
+  useEffect(() => {
+    const handleClick = () => {
+      if (inputRef.current) {
+        inputRef.current.focus()
+      }
+    };
+
+    window.addEventListener('click', handleClick);
+
+    return () => {
+      window.removeEventListener('click', handleClick);
+    };
+  }, [])
+
   useEffect(() => {
     if (isAnalyzing) {
       let elapsedTime = 20
@@ -96,7 +112,7 @@ export default function Typing({ paragraph, isAnalyzing, setIsAnalyzing, isMute 
         <p>Analyzing Your Score Please Wait</p>
       </div>) : (
         <div className="h-full flex flex-1 flex-col justify-between gap-3">
-          <input className="absolute top-0" type="text" value={text} onKeyUp={handleKeyUp} autoFocus={true} />
+          <input ref={inputRef} className="absolute top-0 opacity-0" type="text" value={text} onKeyUp={handleKeyUp} autoFocus={true} />
           <div className="flex-1 rounded-xl bg-[#FFFFFF80] p-5 mb-5 overflow-hidden">
             <div className="overflow-hidden">
               <div ref={paragraphDivRef} className={`flex flex-wrap justify-center transition ease-in-out font-Oswald`} style={{ transform: `translateY(-${translateY}px)`, }}>
