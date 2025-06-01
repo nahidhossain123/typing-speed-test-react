@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Typing from '../component/Typing'
 import Header from '../component/Header'
 import Footer from '../component/Footer'
 import TypingPageHeader from '../component/TypingPageHeader';
 import { useParams } from 'react-router-dom';
 import Result from '../component/Result';
+import { generateNewParagraph } from '../utils/commonFunctions';
 
 const paragraph = [
     "Resources exquisite set arranging moonlight sex him household had. Months had too ham cousin remove far spirit. She procuring the why performed continual improving. Civil songs so large shade in cause. Lady an mr here must neat sold. Children greatest ye extended delicate of. No elderly passage earnest as in removed winding or. ",
@@ -15,14 +16,19 @@ const paragraph = [
 ];
 
 export default function TypingPage() {
-    const { id } = useParams()
-    if (!id) return (<div></div>)
+    const { urlParam } = useParams()
+    const [typingText, setTypingText] = useState(paragraph[generateNewParagraph(paragraph)])
+    const [isMute, setIsMute] = useState(false)
+    const [isAnalyzing, setIsAnalyzing] = useState(false)
+    if (!urlParam) return (<div></div>)
     return (
         <div className='h-screen flex flex-col bg-[#D9EEF3] '>
-            <TypingPageHeader paragraph={paragraph} id={id} />
+            <TypingPageHeader setIsAnalyzing={setIsAnalyzing} onReset={() => {
+                setTypingText(paragraph[generateNewParagraph(paragraph)])
+            }} urlParam={urlParam} isMute={isMute} setIsMute={setIsMute} />
             <div className='h-[calc(100vh-52px-65px)] max-w-[800px] w-full mx-auto'>
                 <div className='mt-5 h-full'>
-                    <Typing paragraph={paragraph} id={id} />
+                    <Typing isAnalyzing={isAnalyzing} setIsAnalyzing={setIsAnalyzing} paragraph={typingText} isMute={isMute} />
                 </div>
             </div>
             <div className='max-w-[800px] w-full mx-auto'>

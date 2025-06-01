@@ -5,9 +5,9 @@ import Result from '../component/Result'
 
 const ResultPage = () => {
     return (
-        <div>
+        <div className='h-screen flex flex-col'>
             <Header />
-            <div className='max-w-[800px] mx-auto'>
+            <div className='max-w-[800px] w-full flex flex-col flex-1 justify-between mx-auto'>
                 <Result />
                 <Footer />
             </div>
