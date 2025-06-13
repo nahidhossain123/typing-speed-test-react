@@ -1,8 +1,7 @@
-import React from "react";
 import { useSearchParams } from "react-router-dom";
 
 export default function Result() {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const wpm = searchParams.get('wpm')
   const accuracy = searchParams.get('accuracy')
   const netSpeed = searchParams.get('netSpeed')

@@ -1,8 +1,7 @@
-import React, { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Lady from '../assets/lady.svg';
 import GentleMan from '../assets/gentleman.svg'
-import ThemeButton from './ui/ThemeButton';
 
 export default function StartSection() {
     const [testTime, setTestTime] = useState('1-minute')

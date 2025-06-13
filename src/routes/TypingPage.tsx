@@ -1,10 +1,8 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Typing from '../component/Typing'
-import Header from '../component/Header'
 import Footer from '../component/Footer'
 import TypingPageHeader from '../component/TypingPageHeader';
 import { useParams } from 'react-router-dom';
-import Result from '../component/Result';
 import { generateNewParagraph } from '../utils/commonFunctions';
 
 const paragraph = [
