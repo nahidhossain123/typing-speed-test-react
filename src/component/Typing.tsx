@@ -1,16 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import keypressedSound from '../assets/click.wav'
+import keyPressedSound from '../assets/click.wav'
 import { useNavigate } from "react-router-dom";
 
 let isMistake = false
 let typedString = ''
 
-export default function Typing({ paragraph, isAnalyzing, setIsAnalyzing, isMute }: { paragraph: string, isAnalyzing: boolean, setIsAnalyzing: React.Dispatch<React.SetStateAction<boolean>>, isMute: boolean }) {
+export default function Typing({ text, setText, paragraph, isAnalyzing, setIsAnalyzing, isMute }: { text: string, setText: React.Dispatch<React.SetStateAction<string>>, paragraph: string, isAnalyzing: boolean, setIsAnalyzing: React.Dispatch<React.SetStateAction<boolean>>, isMute: boolean }) {
   const navigate = useNavigate()
   const inputRef = useRef<HTMLInputElement>(null)
   const [hasMistake, setHasMistake] = useState(-1)
-  const [text, setText] = useState('')
-  const audio = new Audio(keypressedSound)
+  const audio = new Audio(keyPressedSound)
   const [translateY, setTranslateY] = useState(0)
   const paragraphDivRef = useRef<HTMLDivElement | null>(null)
   const [lineCount, setLineCount] = useState(1)

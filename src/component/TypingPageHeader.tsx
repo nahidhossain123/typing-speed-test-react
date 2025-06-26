@@ -71,7 +71,7 @@ const TypingPageHeader = ({ setIsAnalyzing, onReset, urlParam, isMute, setIsMute
                         setMinute(Number(urlParam.split('-')[0]))
                         setSecond(0)
                         onReset()
-                    }} className="w-[30px] h-[30px]" src={reload} alt='stop watch' />
+                    }} className="w-[30px] h-[30px]" src={reload} alt='reload' />
                 </div>
 
             </div>

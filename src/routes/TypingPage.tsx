@@ -17,16 +17,18 @@ export default function TypingPage() {
     const { urlParam } = useParams()
     const [typingText, setTypingText] = useState(paragraph[generateNewParagraph(paragraph)])
     const [isMute, setIsMute] = useState(false)
+    const [text, setText] = useState('')
     const [isAnalyzing, setIsAnalyzing] = useState(false)
     if (!urlParam) return (<div></div>)
     return (
         <div className='h-screen flex flex-col bg-[#D9EEF3] '>
             <TypingPageHeader setIsAnalyzing={setIsAnalyzing} onReset={() => {
                 setTypingText(paragraph[generateNewParagraph(paragraph)])
+                setText('')
             }} urlParam={urlParam} isMute={isMute} setIsMute={setIsMute} />
             <div className='h-[calc(100vh-52px-65px)] max-w-[800px] w-full mx-auto'>
                 <div className='mt-5 h-full'>
-                    <Typing isAnalyzing={isAnalyzing} setIsAnalyzing={setIsAnalyzing} paragraph={typingText} isMute={isMute} />
+                    <Typing text={text} setText={setText} isAnalyzing={isAnalyzing} setIsAnalyzing={setIsAnalyzing} paragraph={typingText} isMute={isMute} />
                 </div>
             </div>
             <div className='max-w-[800px] w-full mx-auto'>
